@@ -15,7 +15,7 @@ public class dbkoneksi {
    static String DB_USER="root";
    static String DB_PASSWORD="";
    
-   static public Connection koneksi(){
+  public static Connection koneksi(){
        try{
             Class.forName(DB_DRIVER);
             return DriverManager.getConnection(DB_HOST, DB_USER, DB_PASSWORD);

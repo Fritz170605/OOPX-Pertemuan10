@@ -4,6 +4,7 @@
  */
 package pertemuan10;
 
+import com.mysql.cj.xdevapi.PreparableStatement;
 import static pertemuan10.dbkoneksi.koneksi;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -11,12 +12,14 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.table.DefaultTableModel;
 /**
  *
  * @author Frids
  * TGL 24 Mei 2025
  */
 public class fMahasiswa extends javax.swing.JFrame {
+    DefaultTableModel dtm = new DefaultTableModel();
 
     /**
      * Creates new form fMahasiswa
@@ -24,26 +27,31 @@ public class fMahasiswa extends javax.swing.JFrame {
      */
     public fMahasiswa() throws SQLException {
         initComponents();
+        tmhs.setModel(dtm);
+        dtm.addColumn("Nama Mahasiswa");
+        dtm.addColumn("NIM");
+        dtm.addColumn("Jenis Kelamin");
+        dtm.addColumn("Prodi");
         
+        lsDtMHS();
+        
+       
+    }
+    private void lsDtMHS() throws SQLException{
         Connection cnn = koneksi();
         
-        if(!cnn.isClosed()){
-            
-           PreparedStatement ps = cnn.prepareStatement("select * from mhs;");
-           ResultSet rs = ps.executeQuery();
-           
-           
-           rs.next();
-           txNIM.setText(rs.getString("NIM"));
-           txNAMA.setText(rs.getString("NAMA"));
-           txJK.setText(rs.getString("JKEL"));
-           txPRODI.setText(rs.getString("PRODI"));
-           
-           
-           
-           
-           
-           
+        if( !cnn.isClosed() ){
+            PreparedStatement ps = cnn.prepareStatement("SELECT * FROM mhs;");
+            ResultSet rs = ps.executeQuery();
+            while ( rs.next() ){
+                Object[] dta = new Object[4];
+                    dta[0] = rs.getString("Nama");
+                    dta[1] = rs.getString("NIM");
+                    dta[2] = rs.getString("Prodi");
+                    dta[3] = rs.getString("JKEL");
+                    
+                dtm.addRow(dta);
+            }
         }
     }
 
@@ -65,6 +73,8 @@ public class fMahasiswa extends javax.swing.JFrame {
         txJK = new javax.swing.JTextField();
         jLabel5 = new javax.swing.JLabel();
         txPRODI = new javax.swing.JTextField();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        tmhs = new javax.swing.JTable();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -98,27 +108,41 @@ public class fMahasiswa extends javax.swing.JFrame {
 
         txPRODI.setFont(new java.awt.Font("Sitka Display", 0, 18)); // NOI18N
 
+        tmhs.setModel(new javax.swing.table.DefaultTableModel(
+            new Object [][] {
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null},
+                {null, null, null, null}
+            },
+            new String [] {
+                "Title 1", "Title 2", "Title 3", "Title 4"
+            }
+        ));
+        jScrollPane1.setViewportView(tmhs);
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(jLabel3)
+                    .addComponent(jLabel2)
+                    .addComponent(jLabel4)
+                    .addComponent(jLabel5)
+                    .addComponent(txNIM, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+                    .addComponent(txJK)
+                    .addComponent(txNAMA)
+                    .addComponent(txPRODI))
+                .addGap(26, 26, 26))
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel1)
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(6, 6, 6)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(txNIM, javax.swing.GroupLayout.PREFERRED_SIZE, 426, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                                .addComponent(txNAMA)
-                                .addComponent(txJK)
-                                .addComponent(txPRODI, javax.swing.GroupLayout.DEFAULT_SIZE, 426, Short.MAX_VALUE))
-                            .addComponent(jLabel3)
-                            .addComponent(jLabel2)
-                            .addComponent(jLabel4)
-                            .addComponent(jLabel5))))
-                .addContainerGap(357, Short.MAX_VALUE))
+                .addComponent(jLabel1)
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -126,14 +150,17 @@ public class fMahasiswa extends javax.swing.JFrame {
                 .addContainerGap()
                 .addComponent(jLabel1)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel2)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txNIM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(37, 37, 37)
-                .addComponent(jLabel3)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txNAMA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jLabel2)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txNIM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(37, 37, 37)
+                        .addComponent(jLabel3)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txNAMA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addGap(214, 214, 214)
                 .addComponent(jLabel4)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txJK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -141,7 +168,7 @@ public class fMahasiswa extends javax.swing.JFrame {
                 .addComponent(jLabel5)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(txPRODI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(250, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         pack();
@@ -196,6 +223,8 @@ public class fMahasiswa extends javax.swing.JFrame {
     private javax.swing.JLabel jLabel3;
     private javax.swing.JLabel jLabel4;
     private javax.swing.JLabel jLabel5;
+    private javax.swing.JScrollPane jScrollPane1;
+    private javax.swing.JTable tmhs;
     private javax.swing.JTextField txJK;
     private javax.swing.JTextField txNAMA;
     private javax.swing.JTextField txNIM;
