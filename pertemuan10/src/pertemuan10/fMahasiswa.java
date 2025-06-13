@@ -4,7 +4,6 @@
  */
 package pertemuan10;
 
-import com.mysql.cj.xdevapi.PreparableStatement;
 import static pertemuan10.dbkoneksi.koneksi;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -12,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 /**
  *
@@ -34,8 +34,24 @@ public class fMahasiswa extends javax.swing.JFrame {
         dtm.addColumn("Prodi");
         
         lsDtMHS();
-        
-       
+        fieldEnabled(false);
+        tombol(false);
+        cBARU.setEnabled(true);
+        cTUTUP.setEnabled(true);
+        cUBAH.setEnabled(true);
+        cHAPUS.setEnabled(true);
+    }
+    private void fieldEnabled(boolean opsi){
+        txNIM.setEditable(opsi);
+        txNAMA.setEditable(opsi);
+        txJK.setEditable(opsi);
+        txPRODI.setEditable(opsi);
+    }
+    private void tombol(boolean opsi){
+        cBARU.setEnabled(opsi);
+        cUBAH.setEnabled(opsi);
+        cHAPUS.setEnabled(opsi);
+        cTUTUP.setEnabled(opsi);
     }
     private void lsDtMHS() throws SQLException{
         Connection cnn = koneksi();
@@ -47,8 +63,8 @@ public class fMahasiswa extends javax.swing.JFrame {
                 Object[] dta = new Object[4];
                     dta[0] = rs.getString("Nama");
                     dta[1] = rs.getString("NIM");
-                    dta[2] = rs.getString("Prodi");
-                    dta[3] = rs.getString("JKEL");
+                    dta[2] = rs.getString("JKEL");
+                    dta[3] = rs.getString("Prodi");
                     
                 dtm.addRow(dta);
             }
@@ -75,6 +91,10 @@ public class fMahasiswa extends javax.swing.JFrame {
         txPRODI = new javax.swing.JTextField();
         jScrollPane1 = new javax.swing.JScrollPane();
         tmhs = new javax.swing.JTable();
+        cTUTUP = new javax.swing.JButton();
+        cUBAH = new javax.swing.JButton();
+        cHAPUS = new javax.swing.JButton();
+        cBARU = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setResizable(false);
@@ -87,6 +107,11 @@ public class fMahasiswa extends javax.swing.JFrame {
         jLabel2.setText("NIM");
 
         txNIM.setFont(new java.awt.Font("Times New Roman", 0, 18)); // NOI18N
+        txNIM.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txNIMActionPerformed(evt);
+            }
+        });
 
         jLabel3.setFont(new java.awt.Font("Sitka Display", 0, 16)); // NOI18N
         jLabel3.setText("Nama Mahasiswa");
@@ -102,6 +127,11 @@ public class fMahasiswa extends javax.swing.JFrame {
         jLabel4.setText("Jenis Kelamin");
 
         txJK.setFont(new java.awt.Font("Sitka Display", 0, 18)); // NOI18N
+        txJK.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txJKActionPerformed(evt);
+            }
+        });
 
         jLabel5.setFont(new java.awt.Font("Sitka Display", 0, 16)); // NOI18N
         jLabel5.setText("Program Studi");
@@ -113,32 +143,86 @@ public class fMahasiswa extends javax.swing.JFrame {
                 {null, null, null, null},
                 {null, null, null, null},
                 {null, null, null, null},
-                {null, null, null, null}
+                {null, "", null, null}
             },
             new String [] {
-                "Title 1", "Title 2", "Title 3", "Title 4"
+                "NIM", "Title 2", "Title 3", "Title 4"
             }
         ));
+        tmhs.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                tmhsMouseClicked(evt);
+            }
+        });
         jScrollPane1.setViewportView(tmhs);
+
+        cTUTUP.setBackground(new java.awt.Color(255, 153, 0));
+        cTUTUP.setFont(new java.awt.Font("Sitka Display", 1, 14)); // NOI18N
+        cTUTUP.setText("Tutup");
+        cTUTUP.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cTUTUPActionPerformed(evt);
+            }
+        });
+
+        cUBAH.setBackground(new java.awt.Color(255, 255, 0));
+        cUBAH.setFont(new java.awt.Font("Sitka Display", 1, 14)); // NOI18N
+        cUBAH.setText("Ubah");
+        cUBAH.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cUBAHActionPerformed(evt);
+            }
+        });
+
+        cHAPUS.setBackground(new java.awt.Color(255, 0, 51));
+        cHAPUS.setFont(new java.awt.Font("Sitka Display", 1, 14)); // NOI18N
+        cHAPUS.setText("Hapus");
+        cHAPUS.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cHAPUSActionPerformed(evt);
+            }
+        });
+
+        cBARU.setBackground(new java.awt.Color(0, 255, 255));
+        cBARU.setFont(new java.awt.Font("Sitka Display", 1, 14)); // NOI18N
+        cBARU.setText("Baru");
+        cBARU.addChangeListener(new javax.swing.event.ChangeListener() {
+            public void stateChanged(javax.swing.event.ChangeEvent evt) {
+                cBARUStateChanged(evt);
+            }
+        });
+        cBARU.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cBARUActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addContainerGap()
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 438, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 12, Short.MAX_VALUE)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
-                    .addComponent(jLabel3)
+                    .addComponent(txNAMA, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+                    .addComponent(txNIM, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
                     .addComponent(jLabel2)
+                    .addComponent(jLabel3)
                     .addComponent(jLabel4)
                     .addComponent(jLabel5)
-                    .addComponent(txNIM, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
-                    .addComponent(txJK)
-                    .addComponent(txNAMA)
-                    .addComponent(txPRODI))
-                .addGap(26, 26, 26))
+                    .addComponent(txPRODI, javax.swing.GroupLayout.DEFAULT_SIZE, 406, Short.MAX_VALUE)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(cBARU)
+                        .addGap(29, 29, 29)
+                        .addComponent(cUBAH, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(30, 30, 30)
+                        .addComponent(cHAPUS, javax.swing.GroupLayout.PREFERRED_SIZE, 80, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(28, 28, 28)
+                        .addComponent(cTUTUP))
+                    .addComponent(txJK))
+                .addGap(121, 121, 121))
             .addGroup(layout.createSequentialGroup()
                 .addGap(20, 20, 20)
                 .addComponent(jLabel1)
@@ -155,20 +239,26 @@ public class fMahasiswa extends javax.swing.JFrame {
                         .addComponent(jLabel2)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txNIM, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(37, 37, 37)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(jLabel3)
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addComponent(txNAMA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(214, 214, 214)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txJK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(30, 30, 30)
-                .addComponent(jLabel5)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(txPRODI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                        .addComponent(txNAMA, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txJK, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(jLabel5)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addComponent(txPRODI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                            .addComponent(cHAPUS, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cTUTUP, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cBARU, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(cUBAH, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addContainerGap(342, Short.MAX_VALUE))
         );
 
         pack();
@@ -177,6 +267,51 @@ public class fMahasiswa extends javax.swing.JFrame {
     private void txNAMAActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txNAMAActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_txNAMAActionPerformed
+
+    private void txNIMActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txNIMActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txNIMActionPerformed
+
+    private void txJKActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txJKActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txJKActionPerformed
+
+    private void cTUTUPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cTUTUPActionPerformed
+       int opsi = JOptionPane.showOptionDialog(this, 
+               "Yakin akan menutup form?", 
+               "Konfirmasi Tutup Form", 
+               JOptionPane.YES_NO_OPTION,
+               JOptionPane.QUESTION_MESSAGE, null, null, null);
+    if(opsi == JOptionPane.YES_OPTION){
+        System.exit(0);
+    }    
+        
+    }//GEN-LAST:event_cTUTUPActionPerformed
+
+    private void cBARUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cBARUActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cBARUActionPerformed
+
+    private void cUBAHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cUBAHActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cUBAHActionPerformed
+
+    private void cBARUStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_cBARUStateChanged
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cBARUStateChanged
+
+    private void cHAPUSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cHAPUSActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cHAPUSActionPerformed
+
+    private void tmhsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tmhsMouseClicked
+        txNIM.setText(tmhs.getValueAt(tmhs.getSelectedRow(), 1).toString() );
+        txNAMA.setText(tmhs.getValueAt(tmhs.getSelectedRow(), 0).toString() );
+        String jkx =(tmhs.getValueAt(tmhs.getSelectedRow(), 2).toString().equals("L"))?"Laki-laki":"Perempuan";
+        txJK.setText(jkx);
+        txPRODI.setText(tmhs.getValueAt(tmhs.getSelectedRow(), 3).toString() );
+        
+    }//GEN-LAST:event_tmhsMouseClicked
 
     /**
      * @param args the command line arguments
@@ -218,6 +353,10 @@ public class fMahasiswa extends javax.swing.JFrame {
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton cBARU;
+    private javax.swing.JButton cHAPUS;
+    private javax.swing.JButton cTUTUP;
+    private javax.swing.JButton cUBAH;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
     private javax.swing.JLabel jLabel3;
