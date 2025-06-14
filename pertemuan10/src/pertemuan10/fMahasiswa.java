@@ -4,6 +4,7 @@
  */
 package pertemuan10;
 
+import com.mysql.cj.jdbc.PreparedStatementWrapper;
 import static pertemuan10.dbkoneksi.koneksi;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -53,9 +54,16 @@ public class fMahasiswa extends javax.swing.JFrame {
         cHAPUS.setEnabled(opsi);
         cTUTUP.setEnabled(opsi);
     }
+    private void clearForm(){
+        txNIM.setText("");
+        txNAMA.setText("");
+        txPRODI.setText("");
+        txJK.setText("");
+    }
     private void lsDtMHS() throws SQLException{
         Connection cnn = koneksi();
-        
+        dtm.getDataVector().removeAllElements();
+        dtm.fireTableDataChanged();
         if( !cnn.isClosed() ){
             PreparedStatement ps = cnn.prepareStatement("SELECT * FROM mhs;");
             ResultSet rs = ps.executeQuery();
@@ -68,9 +76,42 @@ public class fMahasiswa extends javax.swing.JFrame {
                     
                 dtm.addRow(dta);
             }
+            cnn.close();
         }
     }
-
+    private void storeData() throws SQLException{
+        Connection cnn = koneksi();
+        if(!cnn.isClosed()){
+            PreparedStatement ps = cnn.prepareStatement("INSERT INTO mhs(nama,nim,prodi,jkel) VALUES(?,?,?,?); ");
+            ps.setString(1, txNAMA.getText());
+            ps.setString(2, txNIM.getText());
+            ps.setString(3, txPRODI.getText());
+            ps.setString(4, txJK.getText());
+            ps.executeUpdate();
+            cnn.close();
+        }
+    }
+    private void updateData()throws SQLException{
+        Connection cnn = koneksi();
+        if(!cnn.isClosed()){
+            PreparedStatement ps = cnn.prepareStatement("UPDATE mhs SET nama=?,prodi=?,jkel=? WHERE=?; ");
+            ps.setString(1, txNAMA.getText());
+            ps.setString(2, txPRODI.getText());
+            ps.setString(3, txJK.getText());
+            ps.setString(4, txNIM.getText());
+            ps.executeUpdate();
+            cnn.close();
+        }
+    }
+    private void destroyData()throws SQLException{
+        Connection cnn = koneksi();
+        if(!cnn.isClosed()){
+            PreparedStatement ps = cnn.prepareStatement("DELETE FROM mhs WHERE=?; ");
+            ps.setString(1, txNIM.getText());
+            ps.executeUpdate();
+            cnn.close();
+        }
+    }
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -252,11 +293,12 @@ public class fMahasiswa extends javax.swing.JFrame {
                         .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                         .addComponent(txPRODI, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                         .addGap(18, 18, 18)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                            .addComponent(cHAPUS, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cTUTUP, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                             .addComponent(cBARU, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
-                            .addComponent(cUBAH, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                            .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                                .addComponent(cHAPUS, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(cTUTUP, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addComponent(cUBAH, javax.swing.GroupLayout.PREFERRED_SIZE, 34, javax.swing.GroupLayout.PREFERRED_SIZE))))
                     .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 447, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addContainerGap(342, Short.MAX_VALUE))
         );
@@ -289,7 +331,29 @@ public class fMahasiswa extends javax.swing.JFrame {
     }//GEN-LAST:event_cTUTUPActionPerformed
 
     private void cBARUActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cBARUActionPerformed
-        // TODO add your handling code here:
+       if(cBARU.getText().equals("Baru")){
+           cBARU.setText("Simpan");
+           cTUTUP.setText("Batal");
+           cUBAH.setEnabled(false);
+           cHAPUS.setEnabled(false);
+           clearForm();
+           fieldEnabled(true);
+       }else{
+         if(!txNIM.getText().equals("")){
+             try {
+                 storeData();
+                 lsDtMHS();
+             } catch (SQLException ex) {
+                 Logger.getLogger(fMahasiswa.class.getName()).log(Level.SEVERE, null, ex);
+             }
+         } 
+         cBARU.setText("Baru");
+         cTUTUP.setText("Tutup");
+         clearForm();
+         fieldEnabled(false);
+           
+        
+       }
     }//GEN-LAST:event_cBARUActionPerformed
 
     private void cUBAHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cUBAHActionPerformed
@@ -307,9 +371,9 @@ public class fMahasiswa extends javax.swing.JFrame {
     private void tmhsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tmhsMouseClicked
         txNIM.setText(tmhs.getValueAt(tmhs.getSelectedRow(), 1).toString() );
         txNAMA.setText(tmhs.getValueAt(tmhs.getSelectedRow(), 0).toString() );
-        String jkx =(tmhs.getValueAt(tmhs.getSelectedRow(), 2).toString().equals("L"))?"Laki-laki":"Perempuan";
+        String jkx =(tmhs.getValueAt(tmhs.getSelectedRow(), 3).toString().equals("L"))?"Laki-laki":"Perempuan";
         txJK.setText(jkx);
-        txPRODI.setText(tmhs.getValueAt(tmhs.getSelectedRow(), 3).toString() );
+        txPRODI.setText(tmhs.getValueAt(tmhs.getSelectedRow(), 2).toString() );
         
     }//GEN-LAST:event_tmhsMouseClicked
 
