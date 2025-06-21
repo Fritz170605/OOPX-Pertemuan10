@@ -94,7 +94,7 @@ public class fMahasiswa extends javax.swing.JFrame {
     private void updateData()throws SQLException{
         Connection cnn = koneksi();
         if(!cnn.isClosed()){
-            PreparedStatement ps = cnn.prepareStatement("UPDATE mhs SET nama=?,prodi=?,jkel=? WHERE=?; ");
+            PreparedStatement ps = cnn.prepareStatement("UPDATE mhs SET nama=?,prodi=?,jkel=? WHERE nim=?; ");
             ps.setString(1, txNAMA.getText());
             ps.setString(2, txPRODI.getText());
             ps.setString(3, txJK.getText());
@@ -106,7 +106,7 @@ public class fMahasiswa extends javax.swing.JFrame {
     private void destroyData()throws SQLException{
         Connection cnn = koneksi();
         if(!cnn.isClosed()){
-            PreparedStatement ps = cnn.prepareStatement("DELETE FROM mhs WHERE=?; ");
+            PreparedStatement ps = cnn.prepareStatement("DELETE FROM mhs WHERE nim=?; ");
             ps.setString(1, txNIM.getText());
             ps.executeUpdate();
             cnn.close();
@@ -178,6 +178,11 @@ public class fMahasiswa extends javax.swing.JFrame {
         jLabel5.setText("Program Studi");
 
         txPRODI.setFont(new java.awt.Font("Sitka Display", 0, 18)); // NOI18N
+        txPRODI.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                txPRODIActionPerformed(evt);
+            }
+        });
 
         tmhs.setModel(new javax.swing.table.DefaultTableModel(
             new Object [][] {
@@ -319,14 +324,22 @@ public class fMahasiswa extends javax.swing.JFrame {
     }//GEN-LAST:event_txJKActionPerformed
 
     private void cTUTUPActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cTUTUPActionPerformed
-       int opsi = JOptionPane.showOptionDialog(this, 
+       if(cTUTUP.getText().equals("Tutup")){
+        int opsi = JOptionPane.showOptionDialog(this, 
                "Yakin akan menutup form?", 
                "Konfirmasi Tutup Form", 
                JOptionPane.YES_NO_OPTION,
                JOptionPane.QUESTION_MESSAGE, null, null, null);
     if(opsi == JOptionPane.YES_OPTION){
         System.exit(0);
-    }    
+    }
+    }else{
+        cTUTUP.setText("Tutup");
+        cBARU.setText("Baru");
+        cUBAH.setText("Ubah");
+        
+        fieldEnabled(false);
+    } 
         
     }//GEN-LAST:event_cTUTUPActionPerformed
 
@@ -357,7 +370,28 @@ public class fMahasiswa extends javax.swing.JFrame {
     }//GEN-LAST:event_cBARUActionPerformed
 
     private void cUBAHActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cUBAHActionPerformed
-        // TODO add your handling code here:
+        
+        if(cUBAH.getText().equals("Ubah")){
+            cUBAH.setText("Simpan");
+            cTUTUP.setText("Batal");
+            
+            cBARU.setEnabled(false);
+            cHAPUS.setEnabled(false);
+            fieldEnabled(true);
+            txNIM.setEditable(false);
+        }else{
+            try {
+                updateData();
+                lsDtMHS();
+                clearForm();
+                fieldEnabled(false);
+                cUBAH.setText("Ubah");
+                cTUTUP.setText("Tutup");
+                cBARU.setEnabled(true);
+            } catch (SQLException ex) {
+                Logger.getLogger(fMahasiswa.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
     }//GEN-LAST:event_cUBAHActionPerformed
 
     private void cBARUStateChanged(javax.swing.event.ChangeEvent evt) {//GEN-FIRST:event_cBARUStateChanged
@@ -365,17 +399,38 @@ public class fMahasiswa extends javax.swing.JFrame {
     }//GEN-LAST:event_cBARUStateChanged
 
     private void cHAPUSActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cHAPUSActionPerformed
-        // TODO add your handling code here:
+       
+        int jwb = JOptionPane.showOptionDialog(this, "Yakin akan menghapus data?"+txNIM.getText()+"?", 
+                "Konfirmasi hapus data", 
+                JOptionPane.YES_NO_OPTION, 
+                JOptionPane.QUESTION_MESSAGE,
+                null, null, null);
+        
+        if(jwb == JOptionPane.YES_OPTION ){
+        try {
+            destroyData();
+            lsDtMHS();
+            clearForm();
+            cUBAH.setEnabled(false);
+            cHAPUS.setEnabled(false);
+        } catch (SQLException ex) {
+            Logger.getLogger(fMahasiswa.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        }
     }//GEN-LAST:event_cHAPUSActionPerformed
 
     private void tmhsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_tmhsMouseClicked
         txNIM.setText(tmhs.getValueAt(tmhs.getSelectedRow(), 1).toString() );
         txNAMA.setText(tmhs.getValueAt(tmhs.getSelectedRow(), 0).toString() );
-        String jkx =(tmhs.getValueAt(tmhs.getSelectedRow(), 3).toString().equals("L"))?"Laki-laki":"Perempuan";
+        String jkx =(tmhs.getValueAt(tmhs.getSelectedRow(), 2).toString().equals("L"))?"Laki-laki":"Perempuan";
         txJK.setText(jkx);
-        txPRODI.setText(tmhs.getValueAt(tmhs.getSelectedRow(), 2).toString() );
+        txPRODI.setText(tmhs.getValueAt(tmhs.getSelectedRow(), 3).toString() );
         
     }//GEN-LAST:event_tmhsMouseClicked
+
+    private void txPRODIActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_txPRODIActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_txPRODIActionPerformed
 
     /**
      * @param args the command line arguments
